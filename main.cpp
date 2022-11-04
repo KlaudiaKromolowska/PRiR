@@ -3,6 +3,8 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 // Dany zbiór liczb całkowitych przynajmniej 5 cyfrowych
@@ -12,15 +14,26 @@ using namespace std;
 
 // OpenMP, MPI i hybrydowe MPI + OpenMP
 
-int* generate_data(int n, int low, int high) {
+int* read_data(int amount_of_data) {
 
-    int* data = new int[n];
-    for (int i = 0; i < n; i++) {
-        data[i] = rand()%(high - low) + low;
+    int* data = new int[amount_of_data];
+    ifstream newfile;
+    
+    newfile.open("Numbers.txt"); //open a file to perform read operation using file object
+    if (newfile.is_open())
+    {
+        string tp;
+        int i = 0;
+        for(i=0; i < amount_of_data; i++)
+        {
+            getline(newfile, tp);
+            data[i] = stoi(tp);
+        }
+        newfile.close(); //close the file object.
     }
-
     return data;
 }
+
 int sum_of_digits(int num){
     int result = 0;
     do {
@@ -44,29 +57,38 @@ int main()
     int lower_bound = 10000, upper_bound = 99999;
     int min_sum_of_num = 20;
 
-    numbers = generate_data(amount_of_numbers, lower_bound, upper_bound);
-
-    for(int i; i < amount_of_numbers; i++)
+    numbers = read_data(amount_of_numbers);
+    double accepted_numbers = 0;
+    long int sum_of_accepted_numbers = 0;
+    
+    for(int i = 0; i < amount_of_numbers; i++)
     {      
         int suma_cyfr = sum_of_digits(numbers[i]);
         bool result = is_more_than(suma_cyfr, min_sum_of_num);
-        cout << "Number " << numbers[i] << " is ";
+        std::cout << "Number " << numbers[i] << " is ";
         if (result == false)
-            cout << "not ";
-        cout << "accepted!" << endl;
-
-        if result
-        {
-            // list.push_back()
-        }
+            std::cout << "not ";
         else
         {
-            // actual_list.pop()
+            accepted_numbers++;
+            sum_of_accepted_numbers += numbers[i];
         }
+        std::cout << "accepted!" << endl;
+
+        // if result
+        // {
+        //     // list.push_back()
+        // }
+        // else
+        // {
+        //     // actual_list.pop()
+        // }
         
     }
 
-    // obliczyc sumę z pasujących liczb
-    // podzielic przez liczbę pasujących liczb
+    double average = sum_of_accepted_numbers/(double)accepted_numbers;
+    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
+    std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
+    std::cout << "Srednia: " << average << std::endl;
     return 0;
 }
