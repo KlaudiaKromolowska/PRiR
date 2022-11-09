@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 // Dany zbiór liczb całkowitych przynajmniej 5 cyfrowych
@@ -14,22 +15,20 @@ using namespace std;
 
 // OpenMP, MPI i hybrydowe MPI + OpenMP
 
-int* read_data(int amount_of_data) {
+std::vector<int> read_data() {
 
-    int* data = new int[amount_of_data];
+    std::vector<int> data = {};
     ifstream newfile;
     
-    newfile.open("Numbers.txt"); //open a file to perform read operation using file object
+    newfile.open("Numbers.txt");
     if (newfile.is_open())
     {
         string tp;
-        int i = 0;
-        for(i=0; i < amount_of_data; i++)
+        while(getline(newfile, tp))
         {
-            getline(newfile, tp);
-            data[i] = stoi(tp);
+            data.push_back(stoi(tp));
         }
-        newfile.close(); //close the file object.
+        newfile.close();
     }
     return data;
 }
@@ -52,43 +51,91 @@ bool is_more_than(int number, int minimum)
 
 int main()
 {
-    int *numbers;
-    int amount_of_numbers = 10;
     int lower_bound = 10000, upper_bound = 99999;
     int min_sum_of_num = 20;
 
-    numbers = read_data(amount_of_numbers);
-    double accepted_numbers = 0;
-    long int sum_of_accepted_numbers = 0;
+    double start, end;
     
-    for(int i = 0; i < amount_of_numbers; i++)
+    double accepted_numbers, average;
+    long long sum_of_accepted_numbers;
+    std::vector<int> numbers = read_data();
+
+    std::cout << "[OpenMP] [static, default]" << std::endl;
+    start = omp_get_wtime(); 
+
+    accepted_numbers = 0;
+    sum_of_accepted_numbers = 0;
+    #pragma omp parallel for num_threads(8) schedule(static) reduction(+:sum_of_accepted_numbers, accepted_numbers)
+    for(auto & num : numbers)
     {      
-        int suma_cyfr = sum_of_digits(numbers[i]);
-        bool result = is_more_than(suma_cyfr, min_sum_of_num);
-        std::cout << "Number " << numbers[i] << " is ";
-        if (result == false)
-            std::cout << "not ";
-        else
+        int suma_cyfr = sum_of_digits(num);
+        if (is_more_than(suma_cyfr, min_sum_of_num))
         {
             accepted_numbers++;
-            sum_of_accepted_numbers += numbers[i];
+            sum_of_accepted_numbers += num;
         }
-        std::cout << "accepted!" << endl;
-
-        // if result
-        // {
-        //     // list.push_back()
-        // }
-        // else
-        // {
-        //     // actual_list.pop()
-        // }
-        
     }
+    average = sum_of_accepted_numbers/(double)accepted_numbers;
 
-    double average = sum_of_accepted_numbers/(double)accepted_numbers;
+    end = omp_get_wtime(); 
+
+    std::cout << "Czas obliczen: " << end-start << std::endl;
     std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
     std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
     std::cout << "Srednia: " << average << std::endl;
+
+    std::cout << std::endl;
+
+
+    std::cout << "[OpenMP] [static, 8]" << std::endl;
+    start = omp_get_wtime(); 
+
+    accepted_numbers = 0;
+    sum_of_accepted_numbers = 0;
+    #pragma omp parallel for num_threads(8) schedule(static,8) reduction(+:sum_of_accepted_numbers, accepted_numbers)
+    for(auto & num : numbers)
+    {      
+        int suma_cyfr = sum_of_digits(num);
+        if (is_more_than(suma_cyfr, min_sum_of_num))
+        {
+            accepted_numbers++;
+            sum_of_accepted_numbers += num;
+        }
+    }
+    average = sum_of_accepted_numbers/(double)accepted_numbers;
+
+    end = omp_get_wtime(); 
+
+    std::cout << "Czas obliczen: " << end-start << std::endl;
+    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
+    std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
+    std::cout << "Srednia: " << average << std::endl;
+
+    std::cout << std::endl;
+
+    std::cout << "[OpenMP] [dynamic, 8]" << std::endl;
+    start = omp_get_wtime(); 
+
+    accepted_numbers = 0;
+    sum_of_accepted_numbers = 0;
+    #pragma omp parallel for num_threads(8) schedule(dynamic,8) reduction(+:sum_of_accepted_numbers, accepted_numbers)
+    for(auto & num : numbers)
+    {      
+        int suma_cyfr = sum_of_digits(num);
+        if (is_more_than(suma_cyfr, min_sum_of_num))
+        {
+            accepted_numbers++;
+            sum_of_accepted_numbers += num;
+        }
+    }
+    average = sum_of_accepted_numbers/(double)accepted_numbers;
+
+    end = omp_get_wtime(); 
+
+    std::cout << "Czas obliczen: " << end-start << std::endl;
+    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
+    std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
+    std::cout << "Srednia: " << average << std::endl;
+
     return 0;
 }
