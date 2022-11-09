@@ -3,7 +3,7 @@ import argparse
 
 
 def fillFile(amount_of_numbers, min_number, max_number, fileName):
-    file = open(fileName + ".txt", "w")
+    file = open(fileName + str(args.amount) + ".txt", "w")
     for i in range(amount_of_numbers):
         value = random.randint(min_number, max_number)
         file.write(f"{value}\n")

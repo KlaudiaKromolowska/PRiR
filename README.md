@@ -11,4 +11,7 @@ amount - amount of numbers to generate
 min - minimum value of number  
 max - maximum value of number
 
+
 $ gcc main.cpp -o main -fopenmp -lstdc++
+
+$ mpiexec -n 8 onlympi.exe
