@@ -11,10 +11,11 @@ void open_mpi(std::vector<int> numbers, int lower_bound = 10000, int upper_bound
     long long sum_of_accepted_numbers;
 
     std::cout << "[OpenMP] [static, default]" << std::endl;
-    start = omp_get_wtime(); 
 
     accepted_numbers = 0;
     sum_of_accepted_numbers = 0;
+
+    start = omp_get_wtime(); 
     #pragma omp parallel for num_threads(8) schedule(static) reduction(+:sum_of_accepted_numbers, accepted_numbers)
     for(auto & num : numbers)
     {      
@@ -36,10 +37,11 @@ void open_mpi(std::vector<int> numbers, int lower_bound = 10000, int upper_bound
 
     std::cout << std::endl;
     std::cout << "[OpenMP] [static, 8]" << std::endl;
-    start = omp_get_wtime(); 
 
     accepted_numbers = 0;
     sum_of_accepted_numbers = 0;
+
+    start = omp_get_wtime(); 
     #pragma omp parallel for num_threads(8) schedule(static,8) reduction(+:sum_of_accepted_numbers, accepted_numbers)
     for(auto & num : numbers)
     {      
@@ -61,10 +63,11 @@ void open_mpi(std::vector<int> numbers, int lower_bound = 10000, int upper_bound
 
     std::cout << std::endl;
     std::cout << "[OpenMP] [dynamic, default]]" << std::endl;
-    start = omp_get_wtime(); 
 
     accepted_numbers = 0;
     sum_of_accepted_numbers = 0;
+
+    start = omp_get_wtime(); 
     #pragma omp parallel for num_threads(8) schedule(dynamic) reduction(+:sum_of_accepted_numbers, accepted_numbers)
     for(auto & num : numbers)
     {      
@@ -86,10 +89,11 @@ void open_mpi(std::vector<int> numbers, int lower_bound = 10000, int upper_bound
 
     std::cout << std::endl;
     std::cout << "[OpenMP] [dynamic, 8]" << std::endl;
-    start = omp_get_wtime(); 
 
     accepted_numbers = 0;
     sum_of_accepted_numbers = 0;
+
+    start = omp_get_wtime();
     #pragma omp parallel for num_threads(8) schedule(dynamic,8) reduction(+:sum_of_accepted_numbers, accepted_numbers)
     for(auto & num : numbers)
     {      
