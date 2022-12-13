@@ -1,9 +1,51 @@
+#include <fstream>
+#include <string>
+#include <vector>
 #include <omp.h>
 #include <iostream>
 #include <time.h>       /* time */
 
-bool is_more_than(int number, int minimum);
-int sum_of_digits(int num);
+using namespace std;
+// Dany zbiór liczb całkowitych przynajmniej 5 cyfrowych
+// Oblicz średnią arytmetyczną liczb spełniających warunki:
+//      liczba nalezy do przedzialu <x, y>
+//      suma cyfr > 20
+
+// OpenMP, MPI i hybrydowe MPI + OpenMP
+
+bool is_more_than(int, int);
+int sum_of_digits(int);
+void open_mp(std::vector<int>, int, int, int);
+std::vector<int> read_data();
+
+
+int main()
+{
+    int lower_bound = 10000, upper_bound = 99999;
+    int min_sum_of_num = 20;
+
+    std::vector<int> numbers = read_data();
+    open_mp(numbers, lower_bound, upper_bound, min_sum_of_num);
+    return 0;
+}
+
+std::vector<int> read_data() {
+
+    std::vector<int> data = {};
+    ifstream newfile;
+    
+    newfile.open("Numbers1000000.txt");
+    if (newfile.is_open())
+    {
+        string tp;
+        while(getline(newfile, tp))
+        {
+            data.push_back(stoi(tp));
+        }
+        newfile.close();
+    }
+    return data;
+}
 
 void open_mp(std::vector<int> numbers, int lower_bound = 10000, int upper_bound = 99999, int min_sum_of_num = 20)
 {
@@ -32,8 +74,8 @@ void open_mp(std::vector<int> numbers, int lower_bound = 10000, int upper_bound 
 
     end = omp_get_wtime(); 
 
+    std::cout << "Ilosc liczb spelniajacyc kryteria: " << accepted_numbers << "/" << numbers.size() << std::endl;
     std::cout << "Czas obliczen: " << end-start << std::endl;
-    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
     std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
     std::cout << "Srednia: " << average << std::endl;
 
@@ -58,13 +100,13 @@ void open_mp(std::vector<int> numbers, int lower_bound = 10000, int upper_bound 
 
     end = omp_get_wtime(); 
 
+    std::cout << "Ilosc liczb spelniajacyc kryteria: " << accepted_numbers << "/" << numbers.size() << std::endl;
     std::cout << "Czas obliczen: " << end-start << std::endl;
-    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
     std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
     std::cout << "Srednia: " << average << std::endl;
 
     std::cout << std::endl;
-    std::cout << "[OpenMP] [dynamic, default]]" << std::endl;
+    std::cout << "[OpenMP] [dynamic, default]" << std::endl;
 
     accepted_numbers = 0;
     sum_of_accepted_numbers = 0;
@@ -84,8 +126,8 @@ void open_mp(std::vector<int> numbers, int lower_bound = 10000, int upper_bound 
 
     end = omp_get_wtime(); 
 
+    std::cout << "Ilosc liczb spelniajacyc kryteria: " << accepted_numbers << "/" << numbers.size() << std::endl;
     std::cout << "Czas obliczen: " << end-start << std::endl;
-    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
     std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
     std::cout << "Srednia: " << average << std::endl;
 
@@ -110,8 +152,8 @@ void open_mp(std::vector<int> numbers, int lower_bound = 10000, int upper_bound 
 
     end = omp_get_wtime(); 
 
+    std::cout << "Ilosc liczb spelniajacyc kryteria: " << accepted_numbers << "/" << numbers.size() << std::endl;
     std::cout << "Czas obliczen: " << end-start << std::endl;
-    std::cout << "Ilosc liczb: " << accepted_numbers << std::endl;
     std::cout << "Suma: " << sum_of_accepted_numbers << std::endl;
     std::cout << "Srednia: " << average << std::endl;
 }
